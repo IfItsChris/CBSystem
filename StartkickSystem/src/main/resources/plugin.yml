@@ -1,0 +1,11 @@
+name: StartkickSystem
+version: '${project.version}'
+main: de.wh0ischr1s.startkicksystem.StartkickSystem
+api-version: 1.19
+authors: [ wh0ischr1s ]
+description: Testplugin für WildeGames. StartkickSystem
+
+commands:
+  startkick:
+  ja:
+  nein:
