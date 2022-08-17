@@ -4,6 +4,8 @@ import de.wh0ischr1s.startkicksystem.StartkickSystem;
 import de.wh0ischr1s.startkicksystem.manager.PlayersFileManager;
 import de.wh0ischr1s.startkicksystem.utils.Data;
 import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -69,15 +71,21 @@ public class Startkick {
     }
 
     private void broadcastMessage(String[] message) {
-        for(Player all : Bukkit.getOnlinePlayers()) {
-            for(String s : message) {
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            for (String s : message) {
                 all.sendMessage(s);
             }
         }
     }
 
+    private void broadcastComponent(TextComponent message) {
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            all.spigot().sendMessage(message);
+        }
+    }
+
     private void broadcastSound(Sound sound) {
-        for(Player all : Bukkit.getOnlinePlayers()) {
+        for (Player all : Bukkit.getOnlinePlayers()) {
             all.playSound(all.getLocation(), sound, 1, 0);
         }
     }
@@ -89,14 +97,17 @@ public class Startkick {
         manager.addStartkicked(targetUUID.toString());
     }
 
-        public Startkick start() {
+    public Startkick start() {
 
-        /*
-        TextComponent jaMessage = new TextComponent("/ja");
-        jaMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "ja"));
-        TextComponent neinMessage = new TextComponent("/nein");
-        jaMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "ja"));
-        */
+
+        TextComponent jaMessage = new TextComponent(Data.prefix + "§7[§a/ja§7]");
+        jaMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ja"));
+        jaMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§a/ja").create()));
+
+        TextComponent neinMessage = new TextComponent(Data.prefix + "§7[§c/nein§7]");
+        neinMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/nein"));
+        neinMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§c/nein").create()));
+
 
         broadcastMessage(new String[]{
                 " ",
@@ -104,11 +115,14 @@ public class Startkick {
                 " ",
                 "§8__________________________________________________________________",
                 " ",
-        Data.prefix + "Es wurde eine §cStartkick §7Abstimmung gestartet",
-        Data.prefix + "§aVon:   §7" + source.getName(),
-        Data.prefix + "§cAn:    §7" + target.getName(),
-        Data.prefix + "§8Grund: §7" + reason,
-        Data.prefix + "Ihr habt §a15 Sekunden §7Zeit mit §a/ja §7und mit §c/nein §7abzustimmen",
+                Data.prefix + "Es wurde eine §cStartkick §7Abstimmung gestartet",
+                Data.prefix + "§aVon:       §7" + source.getName(),
+                Data.prefix + "§cAn:        §7" + target.getName(),
+                Data.prefix + "§8Grund:     §7" + reason,
+                Data.prefix + "Ihr habt §a15 Sekunden §7Zeit §7abzustimmen"});
+        broadcastComponent(jaMessage);
+        broadcastComponent(neinMessage);
+        broadcastMessage(new String[]{
                 " ",
                 "§8__________________________________________________________________",
                 " ",
@@ -118,9 +132,9 @@ public class Startkick {
         task = Bukkit.getScheduler().runTaskTimer(StartkickSystem.getInstance(), new Runnable() {
             @Override
             public void run() {
-                if(countdown > 0) {
+                if (countdown > 0) {
                     //broadcastMessage("Timer endet in " + countdown + " Sekunden");
-                    switch(countdown) {
+                    switch (countdown) {
                         case 15:
                         case 10:
                         case 5:
@@ -145,7 +159,7 @@ public class Startkick {
 
                     });
 
-                    if(draw()) {
+                    if (draw()) {
                         broadcastMessage(new String[]{
                                 Data.prefix + "Es ist ein §r unentschieden. §7Der Spieler wurde §cnicht gekickt",
                                 "§8__________________________________________________________________",
@@ -157,12 +171,12 @@ public class Startkick {
                     if (willKicked()) {
                         startkick();
                         broadcastMessage(new String[]{
-                        Data.prefix + "Der Spieler wurde für 5 Minuten §aausgeschlossen",
+                                Data.prefix + "Der Spieler wurde für 5 Minuten §aausgeschlossen",
                                 "§8__________________________________________________________________",
                                 " ",
                                 " ",
                                 " "
-                                });
+                        });
                     } else {
                         broadcastMessage(new String[]{
                                 Data.prefix + "§7Der Spieler wurde §cnicht gekickt",

@@ -15,11 +15,14 @@ public class PlayersFileManager {
 
     private String filename;
     private File file;
+    private File fileDir;
     private FileConfiguration configuration;
-    private HashMap<String, Long> startkicked;
+    private HashMap<String, Long> startkicked ;
 
     public PlayersFileManager(String filename) {
         this.filename = filename;
+        this.startkicked = new HashMap<>();
+
     }
 
     public void save() {
@@ -32,16 +35,17 @@ public class PlayersFileManager {
 
     public PlayersFileManager load() {
         file = new File("plugins//StartkickSystem//" + filename + ".yml");
+        fileDir = new File("plugins//StartkickSystem");
         if(!file.exists()) {
             try {
+                fileDir.mkdir();
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+
             }
         }
         configuration = YamlConfiguration.loadConfiguration(file);
         if(!configuration.isSet("startkicked")) {
-            startkicked = new HashMap<>();
             configuration.set("startkicked", new ArrayList<>());
             save();
         } else {
